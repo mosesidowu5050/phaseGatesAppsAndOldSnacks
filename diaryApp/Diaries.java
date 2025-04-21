@@ -1,7 +1,7 @@
 import java.util.List;
 
 public class Diaries {
-    List<Diary> diaries;
+   private List<Diary> diaries;
 
     public void add(String title, String body) {
         diaries.add(new Diary(title, body));
@@ -9,14 +9,14 @@ public class Diaries {
 
     public Diary findByUserName(String userName) {
         for (Diary diary : diaries) {
-            if (diary.equals(userName)) {
+            if (diary.getUsername().equals(userName)) {
                 return diary;
             }
         }
         return null;
     }
 
-    public void delete(String username, String body) {
+        public void delete(String username, String body) {
         diaries.remove(new Diary(username, body));
     }
 }

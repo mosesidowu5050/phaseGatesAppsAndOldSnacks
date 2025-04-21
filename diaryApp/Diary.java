@@ -91,5 +91,9 @@ public class Diary {
         entries.remove(entryToUpdate);
         entries.add(new Entry(id, newTitle, newBody));
     }
+
+    public String getUsername() {
+        return this.username;
+    }
 }
 
