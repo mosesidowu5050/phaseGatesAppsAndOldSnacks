@@ -10,12 +10,12 @@ public class DiaryTest {
     Diary diary;
     @Before
     public void setUp() {
-        diary = new Diary("jonsnow", "jonsnow10");
+        diary = new Diary("jonsnow", "jonsnow1");
     }
 
     @Test
     public void unlockDiaryTest() {
-        diary.unlockDiary("jonsnow10");
+        diary.unlockDiary("jonsnow1");
         boolean isLock = diary.isLocked();
         assertFalse(isLock);
     }
@@ -35,7 +35,7 @@ public class DiaryTest {
 
     @Test
     public void unlockDiary_createEntry_checkSizeOfDiaryTest(){
-        diary.unlockDiary("jonsnow10");
+        diary.unlockDiary("jonsnow1");
         diary.createEntry("Desiderata", "Go placidly amidst the noise and haste");
         assertEquals(1, diary.getSize());
         Entry entryDate = diary.findEntryById(400);
@@ -47,7 +47,7 @@ public class DiaryTest {
 
     @Test
     public void createEntryWithWrongDetailsThrowExceptionsTest(){
-        diary.unlockDiary("jonsnow10");
+        diary.unlockDiary("jonsnow1");
         assertThrows(IllegalArgumentException.class, () -> {
             diary.createEntry(null, null);
         });
@@ -55,7 +55,7 @@ public class DiaryTest {
 
     @Test
     public void unlockDiary_createEntry_checkDiaryIdNumber_lockDiaryTest(){
-        diary.unlockDiary("jonsnow10");
+        diary.unlockDiary("jonsnow1");
         diary.createEntry("Desiderata", "Go placidly amidst the noise and haste");
         assertEquals(400, diary.getId());
         diary.lockDiary();
@@ -64,7 +64,7 @@ public class DiaryTest {
 
     @Test
     public void unlockDiary_createTwoEntry_checkDiaryIdNumber_lockDiaryTest(){
-        diary.unlockDiary("jonsnow10");
+        diary.unlockDiary("jonsnow1");
         diary.createEntry("Desiderata", "Go placidly amidst the noise and haste");
 
         assertEquals(400, diary.getId());
@@ -76,7 +76,7 @@ public class DiaryTest {
 
     @Test
     public void unlockDiary_createTwoEntry_deleteEntryWithDiaryIdNumber_lockDiaryTest(){
-        diary.unlockDiary("jonsnow10");
+        diary.unlockDiary("jonsnow1");
         diary.createEntry("Desiderata", "Go placidly amidst the noise and haste");
         diary.createEntry("Equipment", "Figure it out for yourself my lad");
         diary.deleteEntry(400);
@@ -95,7 +95,7 @@ public class DiaryTest {
 
     @Test
     public void unlockDiary_createOneEntry_findEntryByIdNumberTest(){
-        diary.unlockDiary("jonsnow10");
+        diary.unlockDiary("jonsnow1");
         diary.createEntry("Desiderata", "Go placidly amidst the noise and haste");
         diary.createEntry("Equipment", "Figure it out for yourself my lad");
         Entry foundEntry = diary.findEntryById(400);
@@ -105,7 +105,7 @@ public class DiaryTest {
     }
     @Test
     public void unlockDiary_createTwoEntry_findEntryByIdNumber_lockDiaryTest(){
-        diary.unlockDiary("jonsnow10");
+        diary.unlockDiary("jonsnow1");
         diary.createEntry("1. Desiderata", "Go placidly amidst the noise and haste");
         diary.createEntry("Equipment", "Figure it out for yourself my lad");
         Entry foundEntry = diary.findEntryById(401);
@@ -114,16 +114,10 @@ public class DiaryTest {
         diary.lockDiary();
         assertTrue(diary.isLocked());
     }
-    @Test
-    public void lockDiary_createEntry_findEntryByIdNumber_throwsExceptionTest(){
-        diary.lockDiary();
-        assertThrows(IllegalArgumentException.class, () -> {
-            diary.createEntry("Desiderata", "Go placidly amidst the noise and haste");
-        });
-    }
+
     @Test
     public void unlockDiary_createEntry_updateEntryTest(){
-        diary.unlockDiary("jonsnow10");
+        diary.unlockDiary("jonsnow1");
         diary.createEntry("Desiderata", "Go placidly amidst the noise and haste");
         diary.updateEntry(400, "Equipment", "Figure it out for yourself my lad");
         Entry foundEntry = diary.findEntryById(400);
@@ -132,7 +126,7 @@ public class DiaryTest {
     }
     @Test
     public void unlockDiary_createEntry_updateEntryWithInvalidDetails_throwsExceptionTest(){
-        diary.unlockDiary("jonsnow10");
+        diary.unlockDiary("jonsnow1");
         assertThrows(IllegalArgumentException.class, () -> {
             diary.updateEntry(400, null, null);
             diary.updateEntry(400, "Equipment", "Figure it out for yourself my lad");

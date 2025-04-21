@@ -35,4 +35,8 @@ public class Entry {
     public LocalDate getDateCreated() {
         return dateCreated;
     }
+    public String toString() {
+        String result = "Title: " + title + " \nBody: " + contentBody;
+        return result;
+    }
 }

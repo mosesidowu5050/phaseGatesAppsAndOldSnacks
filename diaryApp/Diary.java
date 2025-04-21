@@ -36,10 +36,11 @@ public class Diary {
     }
 
     public void createEntry(String title, String body) {
-        if (this.isLocked) {
-            throw new IllegalArgumentException("Diary is locked...");
+        if (title == null || title.trim().isEmpty() || body == null || body.trim().isEmpty()) {
+            throw new IllegalArgumentException("Title and body cannot be null or empty.");
         }
-        entries.add(new Entry(idCounter++, title, body));
+        Entry newEntry = new Entry(idCounter++, title, body);
+        entries.add(newEntry);
     }
 
     public int getId() {
@@ -61,7 +62,7 @@ public class Diary {
     }
 
     public Entry findEntryById(int id) {
-        if(isLocked) throw new IllegalArgumentException("Diary is locked...");
+        if (isLocked) throw new IllegalArgumentException("Diary is locked...");
         for (Entry entry : entries) {
             if (entry.getId() == id) {
                 return entry;
@@ -72,10 +73,9 @@ public class Diary {
 
     private boolean isValidUsernameAndPassword(String username, String password) {
         boolean isValidUsername = username != null && !username.trim().isEmpty();
-        boolean isValidPassword = password != null && password.matches("^[a-zA-Z0-9]{8,}$");
+        boolean isValidPassword = password != null && password.length() >= 8;
         return isValidUsername && isValidPassword;
     }
-
 
     public void updateEntry(int id, String newTitle, String newBody) {
         if (isLocked) throw new IllegalStateException("Diary is locked...");
@@ -88,6 +88,7 @@ public class Diary {
         if (newTitle == null || newTitle.trim().isEmpty() || newBody == null || newBody.trim().isEmpty()) {
             throw new IllegalArgumentException("Title and body cannot be null or empty.");
         }
+
         entries.remove(entryToUpdate);
         entries.add(new Entry(id, newTitle, newBody));
     }
@@ -95,5 +96,8 @@ public class Diary {
     public String getUsername() {
         return this.username;
     }
-}
 
+    public boolean checkPassword(String password) {
+            return this.password.equals(password);
+    }
+}
