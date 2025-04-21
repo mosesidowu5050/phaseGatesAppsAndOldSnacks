@@ -5,7 +5,8 @@ public class Diaries {
     private List<Diary> diaries = new ArrayList<>();
 
     public void add(String username, String password) {
-        diaries.add(new Diary(username, password));
+        Diary diary = new Diary(username, password);
+        diaries.add(diary);
     }
 
     public Diary findByUsername(String username) {
@@ -28,9 +29,9 @@ public class Diaries {
 
         if (diaryToRemove != null) {
             diaries.remove(diaryToRemove);
-            System.out.println("Diary deleted successfully.");
         } else {
             throw new IllegalArgumentException("Diary not found.");
         }
     }
+
 }

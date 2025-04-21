@@ -36,8 +36,8 @@ public class Diary {
     }
 
     public void createEntry(String title, String body) {
-        if (title == null || title.trim().isEmpty() || body == null || body.trim().isEmpty()) {
-            throw new IllegalArgumentException("Title and body cannot be null or empty.");
+        if (title == null || body == null) {
+            throw new IllegalArgumentException("Title and body cannot be null.");
         }
         Entry newEntry = new Entry(idCounter++, title, body);
         entries.add(newEntry);
@@ -71,11 +71,6 @@ public class Diary {
         return null;
     }
 
-    private boolean isValidUsernameAndPassword(String username, String password) {
-        boolean isValidUsername = username != null && !username.trim().isEmpty();
-        boolean isValidPassword = password != null && password.length() >= 8;
-        return isValidUsername && isValidPassword;
-    }
 
     public void updateEntry(int id, String newTitle, String newBody) {
         if (isLocked) throw new IllegalStateException("Diary is locked...");
@@ -85,7 +80,7 @@ public class Diary {
             throw new IllegalArgumentException("ID number not found.");
         }
 
-        if (newTitle == null || newTitle.trim().isEmpty() || newBody == null || newBody.trim().isEmpty()) {
+        if (newTitle == null || newBody == null ) {
             throw new IllegalArgumentException("Title and body cannot be null or empty.");
         }
 
@@ -93,11 +88,23 @@ public class Diary {
         entries.add(new Entry(id, newTitle, newBody));
     }
 
+
     public String getUsername() {
         return this.username;
     }
 
     public boolean checkPassword(String password) {
             return this.password.equals(password);
+    }
+
+    private boolean isValidUsernameAndPassword(String username, String password) {
+        boolean isValidUsername = username != null && !username.trim().isEmpty();
+        boolean isValidPassword = password != null && password.length() >= 8;
+        return isValidUsername && isValidPassword;
+    }
+
+    public String toString() {
+        return "Diary [username = " + username +
+                ", number of entries = " + entries.size() + "]";
     }
 }

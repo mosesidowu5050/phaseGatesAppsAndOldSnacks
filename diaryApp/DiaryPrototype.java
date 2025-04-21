@@ -7,15 +7,15 @@ public class DiaryPrototype {
 
     public static void main(String[] args) {
 
-        while (true){
+        while (true) {
             printMenu();
-        System.out.print("Choose option from 1 - 7: ");
-        String option = scanner.nextLine();
+            System.out.print("Choose option from 1 - 7: ");
+            String option = scanner.nextLine();
 
-        while (!option.matches("[1-7]")) {
-            System.out.print("Choose option from 1 - 7");
-            option = scanner.nextLine();
-        }
+            while (!option.matches("[1-7]")) {
+                System.out.print("Choose option from 1 - 7");
+                option = scanner.nextLine();
+            }
 
             if (option.equals("1")) {
                 loginEntry();
@@ -26,13 +26,13 @@ public class DiaryPrototype {
             if (option.equals("3")) {
                 deleteEntry();
             } else if (option.equals("4")) {
-            findEntryById();
-        }
-//            } else if (option.equals("5")) {
-//                updateEntry();
-//            } else if (option.equals("6")) {
-//                findEntryByUsername();
-             else if (option.equals("7")) {
+                findEntryById();
+            } else if (option.equals("5")) {
+                updateEntry();
+            }
+            else if (option.equals("6")) {
+                findByUsername();
+            } else if (option.equals("7")) {
                 System.out.println("Exiting...");
                 break;
             }
@@ -190,11 +190,57 @@ public class DiaryPrototype {
             personalDiary.lockDiary();
         }
 
+
         public static void updateEntry() {
-        if (personalDiary == null) {
+            if (personalDiary == null) {
+                System.out.println("Please log in first using option 1.");
+            }
+            System.out.println("Enter password to unlock diary: ");
+            String password = scanner.nextLine();
+            try {
+                personalDiary.unlockDiary(password);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Failed to unlock diary: " + e.getMessage());
+            }
+
+            System.out.println("Enter your ID: ");
+            String idInput = scanner.nextLine();
+
+            System.out.println("Enter the title: ");
+            String titleInput = scanner.nextLine();
+
+            System.out.println("Enter the body: ");
+            String bodyInput = scanner.nextLine();
+            try {
+                personalDiary.updateEntry(Integer.parseInt(idInput), titleInput, bodyInput);
+                System.out.println("Entry updated successfully!");
+            } catch (IllegalArgumentException e) {
+                System.out.println("Failed to update entry: " + e.getMessage());
+            }
+            personalDiary.lockDiary();
+        }
+
+    private static void findByUsername() {
+        if (personalDiary == null){
             System.out.println("Please log in first using option 1.");
         }
+        System.out.println("Enter password to unlock diary: ");
+        String password = scanner.nextLine();
 
+        try {
+            personalDiary.unlockDiary(password);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Failed to unlock diary: " + e.getMessage());
         }
-}
+        System.out.println("Enter your username: ");
+        String username = scanner.nextLine();
 
+        try {
+            Diary foundEntry = newDiaries.findByUsername(username);
+            System.out.println("Found entry with username: " + foundEntry);
+        } catch (IllegalArgumentException e){
+            System.out.println("Failed to find entry with username: " + e.getMessage());
+        }
+        personalDiary.lockDiary();
+    }
+}
