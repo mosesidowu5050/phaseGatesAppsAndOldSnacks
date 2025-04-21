@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/bankeBank/src" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/menstrualWahala/menstrualWahala" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/oldSnacks" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/diaryApp" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
