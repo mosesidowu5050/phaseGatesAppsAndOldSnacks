@@ -7,9 +7,6 @@ public class Entry {
     private LocalDate dateCreated;
 
     public Entry(int id, String title, String body) {
-        if (title == null || body == null) {
-            throw new IllegalArgumentException("Invalid entry details...");
-        }
         if (id < 0) {
             throw new IllegalArgumentException("Invalid id entry...");
         }

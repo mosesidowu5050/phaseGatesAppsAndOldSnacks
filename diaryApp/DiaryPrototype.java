@@ -18,21 +18,20 @@ public class DiaryPrototype {
             }
 
             if (option.equals("1")) {
-                loginEntry();
-            }
-            if (option.equals("2")) {
+                diaryLogin();
+            } if (option.equals("2")) {
                 createEntry();
-            }
-            if (option.equals("3")) {
+            } if (option.equals("3")) {
                 deleteEntry();
             } else if (option.equals("4")) {
                 findEntryById();
             } else if (option.equals("5")) {
                 updateEntry();
-            }
-            else if (option.equals("6")) {
+            } else if (option.equals("6")) {
                 findByUsername();
             } else if (option.equals("7")) {
+                delete();
+            } else if (option.equals("8")) {
                 System.out.println("Exiting...");
                 break;
             }
@@ -43,17 +42,18 @@ public class DiaryPrototype {
 
     public static void printMenu(){
         System.out.println("""
-                1. Login Entry.
+                1. Diary Login.
                 2. Create a new Entry.
                 3. Delete Entry.
                 4. Find Entry by ID
                 5. Update Entry.
                 6. Find Dairy by Username.
-                7. Exit.
+                7. Delete Diary.
+                8. Exit
                 """);
     }
 
-    public static void loginEntry() {
+    public static void diaryLogin() {
         String username;
         String password;
 
@@ -82,13 +82,7 @@ public class DiaryPrototype {
     }
 
 
-
     public static void createEntry() {
-        if (personalDiary == null) {
-            System.out.println("Please log in first using option 1.");
-            return;
-        }
-
         System.out.print("Enter password: ");
         String password = scanner.nextLine();
 
@@ -111,16 +105,10 @@ public class DiaryPrototype {
         } catch (IllegalArgumentException e) {
             System.out.println("Failed to create entry: " + e.getMessage());
         }
-
         personalDiary.lockDiary();
     }
 
     public static void deleteEntry() {
-        if (personalDiary == null) {
-            System.out.println("Please log in first using option 1.");
-            return;
-        }
-
         System.out.println("Enter password to unlock diary: ");
         String password = scanner.nextLine();
 
@@ -140,7 +128,6 @@ public class DiaryPrototype {
         } catch (NumberFormatException e) {
             System.out.println("Failed to find entry with ID: " + idNumber);
         }
-
         try {
             personalDiary.deleteEntry(id);
             System.out.println("Entry deleted successfully! Your ID is: " + id);
@@ -151,11 +138,6 @@ public class DiaryPrototype {
     }
 
     public static void findEntryById() {
-        if (personalDiary == null) {
-            System.out.println("Please log in first using option 1.");
-            return;
-        }
-
         System.out.println("Enter password to unlock diary: ");
         String password = scanner.nextLine();
 
@@ -220,10 +202,7 @@ public class DiaryPrototype {
             personalDiary.lockDiary();
         }
 
-    private static void findByUsername() {
-        if (personalDiary == null){
-            System.out.println("Please log in first using option 1.");
-        }
+    public static void findByUsername() {
         System.out.println("Enter password to unlock diary: ");
         String password = scanner.nextLine();
 
@@ -243,4 +222,31 @@ public class DiaryPrototype {
         }
         personalDiary.lockDiary();
     }
+
+    public static void delete() {
+        System.out.print("Enter your username: ");
+        String username = scanner.nextLine();
+
+        System.out.print("Enter your password: ");
+        String password = scanner.nextLine();
+
+        try {
+            Diary foundEntry = newDiaries.findByUsername(username);
+            if (foundEntry == null) {
+                System.out.println("Diary not found.");
+                return;
+            }
+
+            if (!foundEntry.checkPassword(password)) {
+                System.out.println("Incorrect password.");
+                return;
+            }
+
+            newDiaries.delete(username, password);
+            System.out.println("Diary deleted successfully!");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Failed to delete diary: " + e.getMessage());
+        }
+    }
+
 }

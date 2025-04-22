@@ -132,6 +132,4 @@ public class DiaryTest {
             diary.updateEntry(400, "Equipment", "Figure it out for yourself my lad");
         });
     }
-
-
 }

@@ -19,19 +19,17 @@ public class Diaries {
     }
 
     public void delete(String username, String password) {
-        Diary diaryToRemove = null;
+        Diary removeDiary = null;
         for (Diary diary : diaries) {
-            if (diary.getUsername().equals(username) && diary.checkPassword(password)) {
-                diaryToRemove = diary;
+            if (diary.getUsername().equals(username) || diary.checkPassword(password)) {
+                removeDiary = diary;
                 break;
             }
         }
-
-        if (diaryToRemove != null) {
-            diaries.remove(diaryToRemove);
-        } else {
-            throw new IllegalArgumentException("Diary not found.");
+        if (removeDiary != null) {
+            diaries.remove(removeDiary);
         }
+        throw new IllegalArgumentException("Diary not found!");
     }
 
 }

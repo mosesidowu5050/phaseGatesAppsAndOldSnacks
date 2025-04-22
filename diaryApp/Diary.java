@@ -102,9 +102,4 @@ public class Diary {
         boolean isValidPassword = password != null && password.length() >= 8;
         return isValidUsername && isValidPassword;
     }
-
-    public String toString() {
-        return "Diary [username = " + username +
-                ", number of entries = " + entries.size() + "]";
-    }
 }
