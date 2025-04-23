@@ -1,252 +1,187 @@
 import java.util.Scanner;
 
 public class DiaryPrototype {
-    public static Diaries newDiaries = new Diaries();
-    public static Diary personalDiary;
-    public static Scanner scanner = new Scanner(System.in);
+    private static final Diaries newDiaries = new Diaries();
+    private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
+        printDiariesMenu();
+        scanner.close();
+    }
 
+    private static void printDiariesMenu() {
         while (true) {
-            printMenu();
-            System.out.print("Choose option from 1 - 7: ");
+            displayDiariesMenu();
             String option = scanner.nextLine();
-
-            while (!option.matches("[1-7]")) {
-                System.out.print("Choose option from 1 - 7");
-                option = scanner.nextLine();
+            if (!option.matches("[1-4]")) {
+                System.out.println("Invalid option. Please choose 1-4.");
+                continue;
             }
 
-            if (option.equals("1")) {
-                diaryLogin();
-            } if (option.equals("2")) {
-                createEntry();
-            } if (option.equals("3")) {
-                deleteEntry();
-            } else if (option.equals("4")) {
-                findEntryById();
-            } else if (option.equals("5")) {
-                updateEntry();
-            } else if (option.equals("6")) {
-                findByUsername();
-            } else if (option.equals("7")) {
-                delete();
-            } else if (option.equals("8")) {
-                System.out.println("Exiting...");
-                break;
+            switch (option) {
+                case "1" -> createDiary();
+                case "2" -> findDiaryByUsername();
+                case "3" -> deleteDiary();
+                case "4" -> {
+                    System.out.println("Exiting...");
+                    return;
+                }
             }
             System.out.println();
         }
     }
 
-
-    public static void printMenu(){
+    private static void displayDiariesMenu() {
         System.out.println("""
-                1. Diary Login.
-                2. Create a new Entry.
-                3. Delete Entry.
-                4. Find Entry by ID
-                5. Update Entry.
-                6. Find Dairy by Username.
-                7. Delete Diary.
-                8. Exit
+                    Diaries Menu:
+                        1. Create / Add Diary
+                        2. Find Diary By Username
+                        3. Delete Diary
+                        4. Exit
                 """);
+        System.out.print("Choose option (1-4): ");
     }
 
-    public static void diaryLogin() {
-        String username;
-        String password;
-
-        while (true) {
-            System.out.print("Enter Username: ");
-            username = scanner.nextLine();
-            if (username.matches("[a-zA-Z]+")) break;
-            System.out.println("Invalid username. Only letters are allowed.");
-        }
-
-        while (true) {
-            System.out.print("Enter Password: ");
-            password = scanner.nextLine();
-            if (password.matches("[a-zA-Z0-9]{8}")) break;
-            System.out.println("Invalid password. 8 characters only.");
-        }
+    private static void createDiary() {
+        System.out.print("Enter Username: ");
+        String username = scanner.nextLine();
+        System.out.print("Enter Password (at least 8 characters): ");
+        String password = scanner.nextLine();
 
         try {
-            personalDiary = new Diary(username, password);
-            System.out.println("New diary created successfully for: " + username);
-
             newDiaries.add(username, password);
+            System.out.println("Diary created successfully for: " + username);
         } catch (IllegalArgumentException e) {
             System.out.println("Failed to create diary: " + e.getMessage());
         }
     }
 
+    private static void findDiaryByUsername() {
+        System.out.print("Enter Username: ");
+        String username = scanner.nextLine();
+        Diary diary = newDiaries.findByUsername(username);
 
-    public static void createEntry() {
-        System.out.print("Enter password: ");
+        if (diary == null) {
+            System.out.println("Diary not found for username: " + username);
+            return;
+        }
+
+        System.out.print("Enter Password: ");
         String password = scanner.nextLine();
-
         try {
-            personalDiary.unlockDiary(password);
+            diary.unlockDiary(password);
         } catch (IllegalArgumentException e) {
             System.out.println("Failed to unlock diary: " + e.getMessage());
             return;
         }
 
-        System.out.print("Enter the title: ");
+        handleDiaryMenu(diary, username);
+    }
+
+
+
+    private static void handleDiaryMenu(Diary diary, String username) {
+        while (true) {
+            displayDiaryMenu(username);
+            String option = scanner.nextLine();
+            if (!option.matches("[1-5]")) {
+                System.out.println("Invalid option. Please choose 1-5.");
+                continue;
+            }
+
+            switch (option) {
+                case "1" -> addEntry(diary);
+                case "2" -> findEntryById(diary);
+                case "3" -> updateEntry(diary);
+                case "4" -> deleteEntry(diary);
+                case "5" -> {
+                    diary.lockDiary();
+                    return;
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    private static void displayDiaryMenu(String username) {
+        System.out.println("Welcome, " + username.toUpperCase());
+        System.out.println(""" 
+            1. Create an Entry
+            2. Find Entry By ID
+            3. Update Entry
+            4. Delete Entry
+            5. Return to Diaries Menu
+        """);
+        System.out.print("Choose option (1-5): ");
+    }
+
+    private static void addEntry(Diary diary) {
+        System.out.print("Enter Title: ");
         String title = scanner.nextLine();
-
-        System.out.print("Enter the body: ");
+        System.out.print("Enter Body: ");
         String body = scanner.nextLine();
-
         try {
-            personalDiary.createEntry(title, body);
-            System.out.println("Entry created successfully! Your ID is: " + personalDiary.getId());
+            diary.createEntry(title, body);
+            System.out.println("Entry created successfully! ID: " + (diary.getId()));
         } catch (IllegalArgumentException e) {
             System.out.println("Failed to create entry: " + e.getMessage());
         }
-        personalDiary.lockDiary();
     }
 
-    public static void deleteEntry() {
-        System.out.println("Enter password to unlock diary: ");
-        String password = scanner.nextLine();
-
-        try {
-            personalDiary.unlockDiary(password);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Failed to unlock diary: " + e.getMessage());
-            return;
-        }
-
-        System.out.println("Enter the ID to delete entry: ");
-        String idNumber = scanner.nextLine();
-
-        int id = 0;
-        try {
-            id = Integer.parseInt(idNumber);
-        } catch (NumberFormatException e) {
-            System.out.println("Failed to find entry with ID: " + idNumber);
-        }
-        try {
-            personalDiary.deleteEntry(id);
-            System.out.println("Entry deleted successfully! Your ID is: " + id);
-        } catch (IllegalArgumentException e){
-            System.out.println("Failed to delete entry: " + e.getMessage());
-        }
-        personalDiary.lockDiary();
-    }
-
-    public static void findEntryById() {
-        System.out.println("Enter password to unlock diary: ");
-        String password = scanner.nextLine();
-
-        try {
-            personalDiary.unlockDiary(password);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Failed to unlock diary: " + e.getMessage());
-            return;
-        }
-
-        System.out.println("Enter the ID to find entry: ");
+    private static void findEntryById(Diary diary) {
+        System.out.print("Enter Entry ID: ");
         String idInput = scanner.nextLine();
-        int id;
-
         try {
-            id = Integer.parseInt(idInput);
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid ID format. Please enter a number.");
-            return;
-        }
-
-        try {
-            Entry entry = personalDiary.findEntryById(id);
+            int id = Integer.parseInt(idInput);
+            Entry entry = diary.findEntryById(id);
             if (entry != null) {
-                System.out.println("ID Entry:\n" + entry);
+                System.out.println("Entry:\n" + entry);
             } else {
                 System.out.println("No entry found with ID: " + id);
             }
         } catch (IllegalArgumentException e) {
-            System.out.println("Failed to find entry: " + e.getMessage());
+            System.out.println("Failed to view entry: Invalid ID or " + e.getMessage());
         }
-            personalDiary.lockDiary();
-        }
-
-
-        public static void updateEntry() {
-            if (personalDiary == null) {
-                System.out.println("Please log in first using option 1.");
-            }
-            System.out.println("Enter password to unlock diary: ");
-            String password = scanner.nextLine();
-            try {
-                personalDiary.unlockDiary(password);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Failed to unlock diary: " + e.getMessage());
-            }
-
-            System.out.println("Enter your ID: ");
-            String idInput = scanner.nextLine();
-
-            System.out.println("Enter the title: ");
-            String titleInput = scanner.nextLine();
-
-            System.out.println("Enter the body: ");
-            String bodyInput = scanner.nextLine();
-            try {
-                personalDiary.updateEntry(Integer.parseInt(idInput), titleInput, bodyInput);
-                System.out.println("Entry updated successfully!");
-            } catch (IllegalArgumentException e) {
-                System.out.println("Failed to update entry: " + e.getMessage());
-            }
-            personalDiary.lockDiary();
-        }
-
-    public static void findByUsername() {
-        System.out.println("Enter password to unlock diary: ");
-        String password = scanner.nextLine();
-
-        try {
-            personalDiary.unlockDiary(password);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Failed to unlock diary: " + e.getMessage());
-        }
-        System.out.println("Enter your username: ");
-        String username = scanner.nextLine();
-
-        try {
-            Diary foundEntry = newDiaries.findByUsername(username);
-            System.out.println("Found entry with username: " + foundEntry);
-        } catch (IllegalArgumentException e){
-            System.out.println("Failed to find entry with username: " + e.getMessage());
-        }
-        personalDiary.lockDiary();
     }
 
-    public static void delete() {
-        System.out.print("Enter your username: ");
-        String username = scanner.nextLine();
+    private static void updateEntry(Diary diary) {
+        System.out.print("Enter Entry ID: ");
+        String idInput = scanner.nextLine();
+        System.out.print("Enter New Title: ");
+        String title = scanner.nextLine();
+        System.out.print("Enter New Body: ");
+        String body = scanner.nextLine();
+        try {
+            diary.updateEntry(Integer.parseInt(idInput), title, body);
+            System.out.println("Entry updated successfully!");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Failed to update entry: Invalid ID or " + e.getMessage());
+        }
+    }
 
-        System.out.print("Enter your password: ");
+    private static void deleteEntry(Diary diary) {
+        System.out.print("Enter Entry ID: ");
+        String idInput = scanner.nextLine();
+        try {
+            int id = Integer.parseInt(idInput);
+            diary.deleteEntry(id);
+            System.out.println("Entry deleted successfully!");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Failed to delete entry: Invalid ID or " + e.getMessage());
+        }
+    }
+
+    private static void deleteDiary() {
+        System.out.print("Enter Username: ");
+        String username = scanner.nextLine();
+        System.out.print("Enter Password: ");
         String password = scanner.nextLine();
 
         try {
-            Diary foundEntry = newDiaries.findByUsername(username);
-            if (foundEntry == null) {
-                System.out.println("Diary not found.");
-                return;
-            }
-
-            if (!foundEntry.checkPassword(password)) {
-                System.out.println("Incorrect password.");
-                return;
-            }
-
             newDiaries.delete(username, password);
             System.out.println("Diary deleted successfully!");
         } catch (IllegalArgumentException e) {
             System.out.println("Failed to delete diary: " + e.getMessage());
         }
     }
-
 }

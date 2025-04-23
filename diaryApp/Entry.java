@@ -1,10 +1,12 @@
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Entry {
     private int id;
     private String title;
     private String contentBody;
-    private LocalDate dateCreated;
+    private LocalDateTime dateCreated;
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public Entry(int id, String title, String body) {
         if (id < 0) {
@@ -14,7 +16,7 @@ public class Entry {
         this.id = id;
         this.title = title;
         this.contentBody = body;
-        this.dateCreated = LocalDate.now();
+        this.dateCreated = LocalDateTime.now();
     }
 
     public int getId() {
@@ -29,11 +31,10 @@ public class Entry {
         return contentBody;
     }
 
-    public LocalDate getDateCreated() {
+    public LocalDateTime getDateCreated() {
         return dateCreated;
     }
     public String toString() {
-        String result = "Title: " + title + " \nBody: " + contentBody;
-        return result;
+        return "Entry ID: "+ id + "\nTitle: " + title + " \nBody: " + contentBody + "\nCreated: " + dateCreated.format(FORMATTER);
     }
 }

@@ -2,12 +2,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
 public class DiaryTest {
 
     Diary diary;
+
     @Before
     public void setUp() {
         diary = new Diary("jonsnow", "jonsnow1");
@@ -28,25 +32,24 @@ public class DiaryTest {
     }
 
     @Test
-    public void lockDiaryTest(){
+    public void lockDiaryTest() {
         diary.lockDiary();
         assertTrue(diary.isLocked());
     }
 
     @Test
-    public void unlockDiary_createEntry_checkSizeOfDiaryTest(){
+    public void unlockDiary_createEntry_checkSizeOfDiaryTest() {
         diary.unlockDiary("jonsnow1");
         diary.createEntry("Desiderata", "Go placidly amidst the noise and haste");
         assertEquals(1, diary.getSize());
         Entry entryDate = diary.findEntryById(400);
-        assertEquals(LocalDate.now(), entryDate.getDateCreated());
-        System.out.println(LocalDate.now() + " " + entryDate.getDateCreated());
+        assertEquals(LocalDateTime.now(), entryDate.getDateCreated());
         diary.lockDiary();
         assertTrue(diary.isLocked());
     }
 
     @Test
-    public void createEntryWithWrongDetailsThrowExceptionsTest(){
+    public void createEntryWithWrongDetailsThrowExceptionsTest() {
         diary.unlockDiary("jonsnow1");
         assertThrows(IllegalArgumentException.class, () -> {
             diary.createEntry(null, null);
@@ -54,7 +57,7 @@ public class DiaryTest {
     }
 
     @Test
-    public void unlockDiary_createEntry_checkDiaryIdNumber_lockDiaryTest(){
+    public void unlockDiary_createEntry_checkDiaryIdNumber_lockDiaryTest() {
         diary.unlockDiary("jonsnow1");
         diary.createEntry("Desiderata", "Go placidly amidst the noise and haste");
         assertEquals(400, diary.getId());
@@ -63,7 +66,7 @@ public class DiaryTest {
     }
 
     @Test
-    public void unlockDiary_createTwoEntry_checkDiaryIdNumber_lockDiaryTest(){
+    public void unlockDiary_createTwoEntry_checkDiaryIdNumber_lockDiaryTest() {
         diary.unlockDiary("jonsnow1");
         diary.createEntry("Desiderata", "Go placidly amidst the noise and haste");
 
@@ -75,7 +78,7 @@ public class DiaryTest {
     }
 
     @Test
-    public void unlockDiary_createTwoEntry_deleteEntryWithDiaryIdNumber_lockDiaryTest(){
+    public void unlockDiary_createTwoEntry_deleteEntryWithDiaryIdNumber_lockDiaryTest() {
         diary.unlockDiary("jonsnow1");
         diary.createEntry("Desiderata", "Go placidly amidst the noise and haste");
         diary.createEntry("Equipment", "Figure it out for yourself my lad");
@@ -84,8 +87,9 @@ public class DiaryTest {
         diary.lockDiary();
         assertTrue(diary.isLocked());
     }
+
     @Test
-    public void unlockDiary_createTwoEntry_deleteEntryWithInvalidIdNumber_lockDiary(){
+    public void unlockDiary_createTwoEntry_deleteEntryWithInvalidIdNumber_lockDiary() {
         assertThrows(IllegalArgumentException.class, () -> {
             diary.createEntry("Desiderata", "Go placidly amidst the noise and haste");
             diary.createEntry("Equipment", "Figure it out for yourself my lad");
@@ -94,7 +98,7 @@ public class DiaryTest {
     }
 
     @Test
-    public void unlockDiary_createOneEntry_findEntryByIdNumberTest(){
+    public void unlockDiary_createOneEntry_findEntryByIdNumberTest() {
         diary.unlockDiary("jonsnow1");
         diary.createEntry("Desiderata", "Go placidly amidst the noise and haste");
         diary.createEntry("Equipment", "Figure it out for yourself my lad");
@@ -103,8 +107,9 @@ public class DiaryTest {
         assertEquals("Go placidly amidst the noise and haste", foundEntry.getContentBody());
         assertFalse(diary.isLocked());
     }
+
     @Test
-    public void unlockDiary_createTwoEntry_findEntryByIdNumber_lockDiaryTest(){
+    public void unlockDiary_createTwoEntry_findEntryByIdNumber_lockDiaryTest() {
         diary.unlockDiary("jonsnow1");
         diary.createEntry("1. Desiderata", "Go placidly amidst the noise and haste");
         diary.createEntry("Equipment", "Figure it out for yourself my lad");
@@ -116,7 +121,7 @@ public class DiaryTest {
     }
 
     @Test
-    public void unlockDiary_createEntry_updateEntryTest(){
+    public void unlockDiary_createEntry_updateEntryTest() {
         diary.unlockDiary("jonsnow1");
         diary.createEntry("Desiderata", "Go placidly amidst the noise and haste");
         diary.updateEntry(400, "Equipment", "Figure it out for yourself my lad");
@@ -124,12 +129,91 @@ public class DiaryTest {
         assertEquals("Equipment", foundEntry.getTitle());
         assertEquals("Figure it out for yourself my lad", foundEntry.getContentBody());
     }
+
     @Test
-    public void unlockDiary_createEntry_updateEntryWithInvalidDetails_throwsExceptionTest(){
+    public void unlockDiary_createEntry_updateEntryWithInvalidDetails_throwsExceptionTest() {
         diary.unlockDiary("jonsnow1");
         assertThrows(IllegalArgumentException.class, () -> {
             diary.updateEntry(400, null, null);
             diary.updateEntry(400, "Equipment", "Figure it out for yourself my lad");
         });
+    }
+
+
+
+
+    @Test
+    public void testAdd_ValidCredentials_AddsDiary() {
+        Diaries diaries = new Diaries();
+        diaries.add("alice", "password123");
+        Diary found = diaries.findByUsername("alice");
+        assertNotNull(found);
+        assertEquals("alice", found.getUsername());
+        assertTrue(found.checkPassword("password123"));
+    }
+
+    @Test
+    public void testAdd_DuplicateUsername_ThrowsException() {
+        Diaries diaries = new Diaries();
+        diaries.add("alice", "password123");
+        assertThrows(IllegalArgumentException.class, () ->
+                diaries.add("alice", "password123")
+        );
+    }
+
+    @Test
+    public void testAdd_InvalidUsername_ThrowsException() {
+        Diaries diaries = new Diaries();
+        assertThrows( IllegalArgumentException.class,() ->
+                diaries.add("", "password123")
+        );
+    }
+
+    @Test
+    public void testAdd_ShortPassword_ThrowsException() {
+        Diaries diaries = new Diaries();
+        assertThrows(IllegalArgumentException.class, () -> diaries.add("alice", "short")
+        );
+    }
+
+    @Test
+    public void testFindByUsername_ExistingUsername_ReturnsDiary() {
+        Diaries diaries = new Diaries();
+        diaries.add("alice", "password123");
+        Diary found = diaries.findByUsername("alice");
+        assertNotNull(found);
+        assertEquals("alice", found.getUsername());
+    }
+    @Test
+    public void testDelete_ValidCredentials_RemovesDiary() {
+        Diaries diaries = new Diaries();
+        diaries.add("alice", "password123");
+        diaries.delete("alice", "password123");
+        Diary found = diaries.findByUsername("alice");
+        assertNull(found);
+    }
+    @Test
+    public void testDelete_NonExistingUsername_ThrowsException() {
+        Diaries diaries = new Diaries();
+        assertThrows(IllegalArgumentException.class, () ->
+                        diaries.delete("alice", "password123")
+        );
+    }
+    @Test
+    public void testListDiaries_EmptyList_ReturnsEmptyList() {
+        Diaries diaries = new Diaries();
+        List<String> usernames = diaries.listDiaries();
+        assertTrue(usernames.isEmpty());
+    }
+
+    @Test
+    public void testListDiaries_MultipleDiaries_ReturnsUsernames() {
+        Diaries diaries = new Diaries();
+        diaries.add("alice", "password123");
+        diaries.add("bob", "password456");
+        List<String> usernames = diaries.listDiaries();
+        assertEquals(2, usernames.size());
+        assertTrue(usernames.contains("alice"));
+        assertTrue(usernames.contains("bob"));
     }
 }

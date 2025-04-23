@@ -5,6 +5,9 @@ public class Diaries {
     private List<Diary> diaries = new ArrayList<>();
 
     public void add(String username, String password) {
+        if (findByUsername(username) != null) {
+            throw new IllegalArgumentException("Username already exists");
+        }
         Diary diary = new Diary(username, password);
         diaries.add(diary);
     }
@@ -21,7 +24,7 @@ public class Diaries {
     public void delete(String username, String password) {
         Diary removeDiary = null;
         for (Diary diary : diaries) {
-            if (diary.getUsername().equals(username) || diary.checkPassword(password)) {
+            if (diary.getUsername().equals(username) && diary.checkPassword(password)) {
                 removeDiary = diary;
                 break;
             }
@@ -31,5 +34,5 @@ public class Diaries {
         }
         throw new IllegalArgumentException("Diary not found!");
     }
-
 }
+

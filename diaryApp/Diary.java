@@ -74,19 +74,17 @@ public class Diary {
 
     public void updateEntry(int id, String newTitle, String newBody) {
         if (isLocked) throw new IllegalStateException("Diary is locked...");
-
         Entry entryToUpdate = findEntryById(id);
         if (entryToUpdate == null) {
             throw new IllegalArgumentException("ID number not found.");
         }
-
         if (newTitle == null || newBody == null ) {
             throw new IllegalArgumentException("Title and body cannot be null or empty.");
         }
-
         entries.remove(entryToUpdate);
         entries.add(new Entry(id, newTitle, newBody));
     }
+
 
 
     public String getUsername() {
