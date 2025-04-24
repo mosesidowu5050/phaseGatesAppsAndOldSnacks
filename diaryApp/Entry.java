@@ -1,12 +1,14 @@
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class Entry {
+public class Entry implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int id;
     private String title;
     private String contentBody;
     private LocalDateTime dateCreated;
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter dateAndTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public Entry(int id, String title, String body) {
         if (id < 0) {
@@ -34,7 +36,8 @@ public class Entry {
     public LocalDateTime getDateCreated() {
         return dateCreated;
     }
+
     public String toString() {
-        return "Entry ID: "+ id + "\nTitle: " + title + " \nBody: " + contentBody + "\nCreated: " + dateCreated.format(FORMATTER);
+        return "Entry ID: " + id + "\nTitle: " + title + " \nBody: " + contentBody + "\nCreated: " + dateCreated.format(dateAndTime);
     }
 }

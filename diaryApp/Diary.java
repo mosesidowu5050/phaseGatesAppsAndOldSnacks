@@ -1,7 +1,9 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Diary {
+public class Diary implements Serializable {
+    private static final long serialVersionUID = 2L;
     private String username;
     private String password;
     private boolean isLocked;
@@ -71,28 +73,25 @@ public class Diary {
         return null;
     }
 
-
     public void updateEntry(int id, String newTitle, String newBody) {
         if (isLocked) throw new IllegalStateException("Diary is locked...");
         Entry entryToUpdate = findEntryById(id);
         if (entryToUpdate == null) {
             throw new IllegalArgumentException("ID number not found.");
         }
-        if (newTitle == null || newBody == null ) {
+        if (newTitle == null || newBody == null) {
             throw new IllegalArgumentException("Title and body cannot be null or empty.");
         }
         entries.remove(entryToUpdate);
         entries.add(new Entry(id, newTitle, newBody));
     }
 
-
-
     public String getUsername() {
         return this.username;
     }
 
     public boolean checkPassword(String password) {
-            return this.password.equals(password);
+        return this.password.equals(password);
     }
 
     private boolean isValidUsernameAndPassword(String username, String password) {

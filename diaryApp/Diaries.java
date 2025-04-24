@@ -1,7 +1,14 @@
+import java.io.Serializable;
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Diaries {
+public class Diaries implements Serializable {
+    private static final long serialVersionUID = 3L;
     private List<Diary> diaries = new ArrayList<>();
 
     public void add(String username, String password) {
@@ -13,8 +20,11 @@ public class Diaries {
     }
 
     public Diary findByUsername(String username) {
+        if (username == null) {
+            return null;
+        }
         for (Diary diary : diaries) {
-            if (diary.getUsername().equals(username)) {
+            if (username.equals(diary.getUsername())) {
                 return diary;
             }
         }
@@ -31,8 +41,21 @@ public class Diaries {
         }
         if (removeDiary != null) {
             diaries.remove(removeDiary);
+        } else {
+            throw new IllegalArgumentException("Diary not found!");
         }
-        throw new IllegalArgumentException("Diary not found!");
+    }
+
+    public void saveHistoryToFile(String fileName) throws IOException {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            out.writeObject(this);
+            System.out.println("Diaries saved to " + fileName);
+        }
+    }
+
+    public static Diaries loadHistoryFromFile(String fileName) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
+            return (Diaries) in.readObject();
+        }
     }
 }
-

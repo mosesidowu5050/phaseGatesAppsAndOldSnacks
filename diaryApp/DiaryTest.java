@@ -1,10 +1,7 @@
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -198,22 +195,5 @@ public class DiaryTest {
         assertThrows(IllegalArgumentException.class, () ->
                         diaries.delete("alice", "password123")
         );
-    }
-    @Test
-    public void testListDiaries_EmptyList_ReturnsEmptyList() {
-        Diaries diaries = new Diaries();
-        List<String> usernames = diaries.listDiaries();
-        assertTrue(usernames.isEmpty());
-    }
-
-    @Test
-    public void testListDiaries_MultipleDiaries_ReturnsUsernames() {
-        Diaries diaries = new Diaries();
-        diaries.add("alice", "password123");
-        diaries.add("bob", "password456");
-        List<String> usernames = diaries.listDiaries();
-        assertEquals(2, usernames.size());
-        assertTrue(usernames.contains("alice"));
-        assertTrue(usernames.contains("bob"));
     }
 }

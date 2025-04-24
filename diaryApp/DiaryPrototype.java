@@ -1,20 +1,37 @@
 import java.util.Scanner;
+import java.io.IOException;
+import java.io.FileNotFoundException;
 
 public class DiaryPrototype {
-    private static final Diaries newDiaries = new Diaries();
+    private static Diaries newDiaries;
     private static final Scanner scanner = new Scanner(System.in);
+    private static final String DIARIES_FILE = "diaries.ser";
 
     public static void main(String[] args) {
+
+        try {
+            newDiaries = Diaries.loadHistoryFromFile(DIARIES_FILE);
+            System.out.println("Loaded existing diaries from " + DIARIES_FILE);
+        } catch (FileNotFoundException e) {
+            System.out.println("No existing diaries found. Starting with a new Diaries collection.");
+            newDiaries = new Diaries();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error loading diaries: " + e.getMessage());
+            System.out.println("Starting with a new Diaries collection.");
+            newDiaries = new Diaries();
+        }
+
         printDiariesMenu();
         scanner.close();
     }
+
 
     private static void printDiariesMenu() {
         while (true) {
             displayDiariesMenu();
             String option = scanner.nextLine();
-            if (!option.matches("[1-4]")) {
-                System.out.println("Invalid option. Please choose 1-4.");
+            if (!option.matches("[1-6]")) {
+                System.out.println("Invalid option. Please choose 1-6.");
                 continue;
             }
 
@@ -22,8 +39,16 @@ public class DiaryPrototype {
                 case "1" -> createDiary();
                 case "2" -> findDiaryByUsername();
                 case "3" -> deleteDiary();
-                case "4" -> {
+                case "4" -> saveDiariesHistory();
+                case "5" -> loadDiariesHistory();
+                case "6" -> {
                     System.out.println("Exiting...");
+                    try {
+                        newDiaries.saveHistoryToFile(DIARIES_FILE);
+                        System.out.println("Diaries saved successfully.");
+                    } catch (IOException e) {
+                        System.err.println("Error saving diaries: " + e.getMessage());
+                    }
                     return;
                 }
             }
@@ -37,14 +62,17 @@ public class DiaryPrototype {
                         1. Create / Add Diary
                         2. Find Diary By Username
                         3. Delete Diary
-                        4. Exit
+                        4. Save Diaries
+                        5. Load Diaries
+                        6. Exit
                 """);
-        System.out.print("Choose option (1-4): ");
+        System.out.print("Choose option (1-6): ");
     }
 
     private static void createDiary() {
         System.out.print("Enter Username: ");
         String username = scanner.nextLine();
+
         System.out.print("Enter Password (at least 8 characters): ");
         String password = scanner.nextLine();
 
@@ -78,8 +106,6 @@ public class DiaryPrototype {
         handleDiaryMenu(diary, username);
     }
 
-
-
     private static void handleDiaryMenu(Diary diary, String username) {
         while (true) {
             displayDiaryMenu(username);
@@ -105,7 +131,7 @@ public class DiaryPrototype {
 
     private static void displayDiaryMenu(String username) {
         System.out.println("Welcome, " + username.toUpperCase());
-        System.out.println(""" 
+        System.out.println("""
             1. Create an Entry
             2. Find Entry By ID
             3. Update Entry
@@ -182,6 +208,26 @@ public class DiaryPrototype {
             System.out.println("Diary deleted successfully!");
         } catch (IllegalArgumentException e) {
             System.out.println("Failed to delete diary: " + e.getMessage());
+        }
+    }
+
+    private static void saveDiariesHistory() {
+        try {
+            newDiaries.saveHistoryToFile(DIARIES_FILE);
+            System.out.println("Diaries saved successfully.");
+        } catch (IOException e) {
+            System.out.println("Failed to save diaries: " + e.getMessage());
+        }
+    }
+
+    private static void loadDiariesHistory() {
+        try {
+            newDiaries = Diaries.loadHistoryFromFile(DIARIES_FILE);
+            System.out.println("Diaries loaded successfully from " + DIARIES_FILE);
+        } catch (FileNotFoundException e) {
+            System.out.println("No saved diaries found at " + DIARIES_FILE);
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Failed to load diaries: " + e.getMessage());
         }
     }
 }
