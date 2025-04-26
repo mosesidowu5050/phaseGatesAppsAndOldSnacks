@@ -1,0 +1,92 @@
+@startuml
+
+package eStore{
+
+enum ProductCategory {
+  ELECTRONICS
+  GROCERIES
+  UTENSILS
+  CLOTHING
+}
+
+enum CardType {
+  MASTER_CARD
+  VISA_CARD
+  VERVE
+  AMERICA_EXPRESS
+}
+
+class Address {
+  -cityName: String
+  -countryName: String
+  -houseNumber: String
+  -street: String
+  -state: String
+}
+
+abstract class User {
+  -age: int
+  -emailAddress: String
+  -homeAddress: Address
+  -name: String
+  -password: String
+  -phone: String
+}
+
+class Customer
+class Seller
+class Admin
+
+User <|-- Customer
+User <|-- Seller
+User <|-- Admin
+
+class Product {
+  -productId: String
+  -productName: String
+  -price: double
+  -productDescription: String
+  -category: ProductCategory
+}
+
+
+class Item {
+  -quantity: int
+  -product: Product
+}
+
+
+class ShoppingCart {
+  -items: List<Item>
+}
+
+
+class CreditCardInformation {
+  -cardNumber: String
+  -nameOnCard: String
+  -cardType: CardType
+  -cardCVV: String
+  -expiryYear: int
+  -expiryMonth: int
+}
+
+
+class BillingInformation {
+  -receiverPhoneNumber: String
+  -receiverName: String
+  -deliveryAddress: Address
+  -creditCardInfo: CreditCardInformation
+}
+
+
+User "1" o--> "1" Address : homeAddress
+Customer "1" o--> "0.*" BillingInformation : billingInfos
+Customer "1" o--> "0.*" ShoppingCart : carts
+ShoppingCart "1" o--> "0.*" Item : items
+Item "1" --> "1" Product : product
+BillingInformation "1" o--> "1" Address : deliveryAddress
+BillingInformation "1" o--> "1" CreditCardInformation : creditCardInfo
+Product --> ProductCategory : category
+CreditCardInformation --> CardType : cardType
+}
+@enduml

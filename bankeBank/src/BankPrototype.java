@@ -3,10 +3,12 @@ import java.util.Scanner;
 
 public class BankPrototype {
 
-    private static Bank atm = new Bank();
+    private static final Bank atm = new Bank();
+    private static final Bank firstBank = atm;
     private static Scanner userInput = new Scanner(System.in);
 
     public static void main(String[] args) {
+
         while (true) {
             printMenu();
             System.out.print("Choose option between (1 - 7) and (0 to exit): ");
