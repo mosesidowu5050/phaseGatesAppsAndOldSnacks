@@ -9,6 +9,7 @@
       <sourceFolder url="file://$MODULE_DIR$/diaryApp" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/fileHistoryDiaryApp" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/eStore" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/geoPoliticalZones" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
